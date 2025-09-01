@@ -8,7 +8,8 @@ setup(
     packages=find_packages(where="src"),
     package_dir={"": "src"},
     install_requires=[
-        "web3"
+        "web3",
+        "PyYAML"
     ],
     python_requires=">=3.7",
 )
