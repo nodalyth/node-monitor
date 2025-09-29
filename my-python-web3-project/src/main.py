@@ -2,6 +2,7 @@
 import argparse
 import yaml
 from web3 import Web3
+from pprint import pprint
 
 def main():
     parser = argparse.ArgumentParser(description="Node monitor configuration")
@@ -23,8 +24,26 @@ def main():
 
         block_number = "latest"  # Replace with the desired block number or use 'latest'
         block = w3.eth.get_block(block_number)
+        print("\nBlock data (AttributeDict only):")
+        if hasattr(block, 'items'):
+            pprint(dict(block), indent=5)
+        else:
+            pprint(block, indent=5)
 
-        print(block)
+        # Retrieve and print the first transaction in the block, if present
+        txs = dict(block).get('transactions', [])
+        if txs:
+            print("\nFirst transaction in the block:")
+            first_tx = txs[0]
+            # If transactions are hashes, fetch the full transaction
+            if isinstance(first_tx, (str, bytes)):
+                tx_data = w3.eth.get_transaction(first_tx)
+                pprint(dict(tx_data), indent=5)
+            else:
+                pprint(first_tx, indent=5)
+        else:
+            print("\nNo transactions in the block.")
+        print("")
 
         if w3.is_connected():
             print("Successfully connected to the node.")
